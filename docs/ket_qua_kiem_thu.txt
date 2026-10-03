@@ -1,0 +1,26 @@
+KẾT QUẢ KIỂM THỬ THỰC HÀNH PYTHON MQTT
+Ngày kiểm thử: 03/10/2026 (Asia/Saigon)
+Môi trường: Windows, Python 3.13.7, paho-mqtt 2.1.0, aMQTT 0.11.3
+Broker: MQTT TCP cục bộ, cổng tạm do bộ kiểm thử tự chọn
+Lệnh: python -m unittest discover -s tests -v
+
+test_bad_config_and_unreachable_broker_report_errors ... ok
+test_bai1_identity_from_config ... ok
+test_bai1_three_messages_and_cli_identity ... ok
+test_bai2_default_three_second_period_and_random_ranges ... ok
+test_bai2_exact_thresholds_and_independent_warnings ... ok
+test_bai2_invalid_payloads_do_not_stop_monitor ... ok
+test_bai2_multiple_sensors ... ok
+test_bai3_device_rejects_invalid_and_replies_to_repeated_valid_command ... ok
+test_bai3_light_fan_pump_use_separate_topics ... ok
+test_bai3_no_device_times_out_instead_of_claiming_success ... ok
+test_bai3_on_off_invalid_input_and_exit ... ok
+test_bai3_retained_command_is_ignored ... ok
+
+Ran 12 tests in 24.273s
+OK
+
+12/12 kiểm thử đạt. Các chương trình được chạy như tiến trình riêng
+và trao đổi bản tin qua broker thật. Bộ kiểm thử dùng thông tin sinh
+viên minh họa. Kết quả này xác nhận broker aMQTT cục bộ; chưa chạy
+với Mosquitto, broker từ xa, xác thực tài khoản hoặc TLS.

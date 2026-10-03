@@ -1,0 +1,11 @@
+{
+  "host": "127.0.0.1",
+  "port": 1883,
+  "username": "",
+  "password": "",
+  "tls": false,
+  "ca_cert": null,
+  "timeout": 10,
+  "student_name": "",
+  "student_id": ""
+}
