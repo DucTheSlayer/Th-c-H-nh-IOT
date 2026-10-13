@@ -3,4 +3,6 @@
 __pycache__/
 *.py[cod]
 /config.json
+/TH1/config.json
+/TH2/config.json
 .env

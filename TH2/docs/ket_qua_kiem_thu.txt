@@ -1,0 +1,37 @@
+KẾT QUẢ KIỂM TRA TH2 PYTHON VỚI AMQP
+Ngày kiểm tra: 12/10/2026 (Asia/Saigon)
+Môi trường: Windows, Python 3.13.7, pika 1.3.2
+
+Kiểm tra mã nguồn và logic bằng unittest, thay kết nối broker bằng mock:
+1. Bài 1: gửi 3 lời chào chứa đúng họ tên/mã sinh viên; nhận UTF-8 và in thời gian: đạt.
+2. Bài 1: consumer đăng ký iot_lab_queue và chạy vòng nhận: đạt.
+3. Bài 2: JSON có đủ 3 trường; giá trị ngẫu nhiên đúng khoảng; yêu cầu chờ 3 giây giữa các lần gửi: đạt.
+4. Bài 2: ngưỡng 35/40 không cảnh báo; hai cảnh báo độc lập; mẫu 36.4/38.9 có cả hai: đạt.
+5. Bài 2: mẫu cố định và bỏ qua dữ liệu JSON/UTF-8 không hợp lệ: đạt.
+6. Bài 2: monitor đăng ký sensor_data_queue: đạt.
+7. Bài 3: producer khai báo direct exchange, gửi đủ info/warning/critical: đạt.
+8. Bài 3: warning_queue và critical_queue bind đúng routing key; đúng định dạng đầu ra: đạt.
+9. Cấu hình host/port/virtual host và mã thoát khi lỗi: đạt.
+
+Ran 9 tests
+OK
+
+Kiểm tra thêm:
+- Biên dịch toàn bộ file Python trong TH2 bằng compileall: đạt.
+- Tham số --help của hai producer: đạt, hiển thị đúng tiếng Việt.
+- docker compose config: đạt.
+- Chạy khi chưa có broker: báo AMQPConnectionError và trả mã lỗi 1.
+
+GIỚI HẠN KIỂM TRA
+Chưa xác nhận gửi/nhận qua RabbitMQ thật, chu kỳ thực tế và phân phối message trên broker.
+Cổng 127.0.0.1:5672 hiện chưa có broker. Docker Desktop chưa chạy được vì WSL chưa cài.
+Các kiểm tra dùng mock chỉ xác nhận logic và lời gọi API, không thay thế kiểm thử RabbitMQ.
+Để kiểm tra đầy đủ, khởi động RabbitMQ hoặc cấu hình broker lớp, rồi chạy 3 bài theo README.md.
+
+CẬP NHẬT 13/10/2026
+- Broker trên máy hiện đã hoạt động, phiên bản RabbitMQ 4.3.6.
+- Đã sửa mọi khai báo queue của TH2 sang durable=True.
+- Kết nối broker thật và khai báo thành công iot_lab_queue, sensor_data_queue,
+  warning_queue, critical_queue; không còn lỗi transient_nonexcl_queues.
+- Chạy lại 9 kiểm tra logic và compileall: đạt.
+- Chưa kiểm thử đầy đủ gửi/nhận và chu kỳ thực tế trên broker.
