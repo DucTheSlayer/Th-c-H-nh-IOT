@@ -2,21 +2,25 @@
 
 from amqp_common import connect, run
 
+EXCHANGE_NAME = "iot_alert_exchange"
+QUEUE_NAME = "critical_queue"
+ROUTING_KEY = "critical"
+
 
 def on_message(channel, method, properties, body):
-    print(f"[critical_queue] Da nhan: {body.decode('utf-8', errors='replace')}", flush=True)
+    message = body.decode("utf-8", errors="replace")
+    print(f"[{QUEUE_NAME}] Da nhan: {message}", flush=True)
+    channel.basic_ack(delivery_tag=method.delivery_tag)
 
 
 def main():
     with connect() as connection:
         channel = connection.channel()
-        channel.exchange_declare(exchange="iot_alert_exchange", exchange_type="direct")
-        channel.queue_declare(queue="critical_queue", durable=True)
-        channel.queue_bind(exchange="iot_alert_exchange", queue="critical_queue",
-                           routing_key="critical")
-        channel.basic_consume(queue="critical_queue", on_message_callback=on_message,
-                              auto_ack=True)
-        print("Dang lang nghe critical_queue. Nhan Ctrl+C de dung.", flush=True)
+        channel.exchange_declare(exchange=EXCHANGE_NAME, exchange_type="direct")
+        channel.queue_declare(queue=QUEUE_NAME, durable=True)
+        channel.queue_bind(exchange=EXCHANGE_NAME, queue=QUEUE_NAME, routing_key=ROUTING_KEY)
+        channel.basic_consume(queue=QUEUE_NAME, on_message_callback=on_message)
+        print(f"Dang lang nghe {QUEUE_NAME}. Nhan Ctrl+C de dung.", flush=True)
         channel.start_consuming()
 
 
