@@ -5,4 +5,5 @@ __pycache__/
 /config.json
 /TH1/config.json
 /TH2/config.json
+/TH3/config.json
 .env

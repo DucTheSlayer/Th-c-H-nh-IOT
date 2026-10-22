@@ -1,0 +1,128 @@
+KIEM THU TH3 COAP
+Ngay thuc hien: 2026-10-22T09:56:54.019273+07:00
+Python: 3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]
+aiocoap: 0.4.17
+Server/client la cac tien trinh rieng; trao doi CoAP qua UDP loopback.
+Thong tin TEST001 / Sinh vien test chi la du lieu kiem thu.
+
+
+--- coap_client_bai1.py --name Sinh vien test --student-id TEST001 --count 3 ---
+Sending GET request...
+URI: coap://127.0.0.1:56753/iot/lab/message
+Code: 2.05 Content
+Payload: Xin chao tu CoAP Server
+Sending POST request...
+Payload: Xin chao tu CoAP Client - TEST001 - Sinh vien test
+Code: 2.04 Changed
+Payload: Server da nhan thong diep
+Sending POST request...
+Payload: Xin chao tu CoAP Client - TEST001 - Sinh vien test
+Code: 2.04 Changed
+Payload: Server da nhan thong diep
+Sending POST request...
+Payload: Xin chao tu CoAP Client - TEST001 - Sinh vien test
+Code: 2.04 Changed
+Payload: Server da nhan thong diep
+
+
+--- BAI 1 SERVER ---
+SERVER READY 127.0.0.1:56753 (UDP)
+GET request received: /iot/lab/message
+POST request received:
+Payload: Xin chao tu CoAP Client - TEST001 - Sinh vien test
+Time: 2026-10-22 09:56:54 +0700
+POST request received:
+Payload: Xin chao tu CoAP Client - TEST001 - Sinh vien test
+Time: 2026-10-22 09:56:54 +0700
+POST request received:
+Payload: Xin chao tu CoAP Client - TEST001 - Sinh vien test
+Time: 2026-10-22 09:56:54 +0700
+
+
+--- monitor_client_bai2.py --count 2 ---
+[2026-10-22 09:56:55 +0700] Received sensor data
+Device: sensor01
+Temperature: 36.1 C
+Humidity: 38.7 %
+CANH BAO: Nhiet do cao
+CANH BAO: Do am thap
+[2026-10-22 09:56:58 +0700] Received sensor data
+Device: sensor01
+Temperature: 36.1 C
+Humidity: 38.7 %
+CANH BAO: Nhiet do cao
+CANH BAO: Do am thap
+
+
+--- BAI 2 SERVER - mau co dinh de demo canh bao ---
+Sensor updated: {'device_id': 'sensor01', 'temperature': 36.1, 'humidity': 38.7}
+SERVER READY 127.0.0.1:56755 (UDP)
+Sensor updated: {'device_id': 'sensor01', 'temperature': 36.1, 'humidity': 38.7}
+
+
+--- light_controller_bai3.py  ---
+Nhap lenh (ON/OFF/STATUS/EXIT): Lệnh không hợp lệ. Chọn ON, OFF, STATUS hoặc EXIT.
+Nhap lenh (ON/OFF/STATUS/EXIT): Code: 2.04 Changed
+Payload: {"device_id": "light01", "status": "ON"}
+[2026-10-22 09:56:59 +0700] Trang thai hien tai
+Device: light01
+Status: ON
+Nhap lenh (ON/OFF/STATUS/EXIT): Code: 2.05 Content
+Payload: {"device_id": "light01", "status": "ON"}
+[2026-10-22 09:56:59 +0700] Trang thai hien tai
+Device: light01
+Status: ON
+Nhap lenh (ON/OFF/STATUS/EXIT): 
+
+--- light_controller_bai3.py  ---
+Nhap lenh (ON/OFF/STATUS/EXIT): Code: 2.04 Changed
+Payload: {"device_id": "light01", "status": "OFF"}
+[2026-10-22 09:56:59 +0700] Trang thai hien tai
+Device: light01
+Status: OFF
+Nhap lenh (ON/OFF/STATUS/EXIT): Code: 2.05 Content
+Payload: {"device_id": "light01", "status": "OFF"}
+[2026-10-22 09:56:59 +0700] Trang thai hien tai
+Device: light01
+Status: OFF
+Nhap lenh (ON/OFF/STATUS/EXIT): 
+
+--- BAI 3 MONITOR - Observe, khong polling ---
+Registering CoAP Observe...
+[2026-10-22 09:56:58 +0700] Initial State
+Device: light01
+Status: OFF
+Observe registration successful
+[2026-10-22 09:56:59 +0700] State Updated
+Device: light01
+Status: ON
+[2026-10-22 09:56:59 +0700] State Updated
+Device: light01
+Status: OFF
+
+
+--- BAI 3 SERVER ---
+SERVER READY 127.0.0.1:56757 (UDP)
+Observe clients: 1
+PUT request received: Device: light01, Command: ON
+Light state changed: OFF -> ON
+Notify observers: ON
+PUT request received: Device: light01, Command: OFF
+Light state changed: ON -> OFF
+Notify observers: OFF
+
+
+--- BO KIEM THU TU DONG ---
+test_controller_and_monitor_cli (test_integration.CoAPIntegrationTests.test_controller_and_monitor_cli) ... ok
+test_light_two_observers_changes_only_and_invalid_put (test_integration.CoAPIntegrationTests.test_light_two_observers_changes_only_and_invalid_put) ... ok
+test_message_client_cli (test_integration.CoAPIntegrationTests.test_message_client_cli) ... ok
+test_message_get_post_latest_and_errors (test_integration.CoAPIntegrationTests.test_message_get_post_latest_and_errors) ... ok
+test_sensor_defaults_random_updates_and_polling (test_integration.CoAPIntegrationTests.test_sensor_defaults_random_updates_and_polling) ... ok
+test_sensor_fixed_values_and_selected_device (test_integration.CoAPIntegrationTests.test_sensor_fixed_values_and_selected_device) ... ok
+test_sensor_thresholds_and_invalid_payloads (test_integration.CoAPIntegrationTests.test_sensor_thresholds_and_invalid_payloads) ... ok
+test_server_unavailable_client_exits_with_error (test_integration.CoAPIntegrationTests.test_server_unavailable_client_exits_with_error) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 8.249s
+
+OK

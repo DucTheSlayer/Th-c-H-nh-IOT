@@ -1,0 +1,7 @@
+{
+  "host": "127.0.0.1",
+  "port": 5683,
+  "timeout": 5,
+  "student_name": "",
+  "student_id": ""
+}
