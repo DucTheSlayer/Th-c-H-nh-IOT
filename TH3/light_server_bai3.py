@@ -10,12 +10,15 @@ from coap_common import arguments, device_id, json_message, run, serve
 
 class LightResource(resource.ObservableResource):
     def __init__(self, identifier="light01"):
+        self.observers = 0
         super().__init__()
         self.identifier = identifier
         self.status = "OFF"
 
     def update_observation_count(self, newcount):
-        print(f"Observe clients: {newcount}", flush=True)
+        if newcount > self.observers:
+            print("\nNew Observe registration received", flush=True)
+        self.observers = newcount
 
     async def render_get(self, request):
         return json_message({"device_id": self.identifier, "status": self.status})
@@ -32,9 +35,9 @@ class LightResource(resource.ObservableResource):
             return aiocoap.Message(code=aiocoap.BAD_REQUEST, payload=str(error).encode("utf-8"))
         previous = self.status
         self.status = data["command"]
-        print(f"PUT request received: Device: {self.identifier}, Command: {self.status}", flush=True)
+        print(f"\nPUT request received:\nDevice: {self.identifier}\nCommand: {self.status}", flush=True)
         if previous != self.status:
-            print(f"Light state changed: {previous} -> {self.status}\nNotify observers: {self.status}", flush=True)
+            print(f"\nLight state changed: {previous} -> {self.status}\nNotify observers: {self.status}", flush=True)
             self.updated_state()
         return json_message({"device_id": self.identifier, "status": self.status}, aiocoap.CHANGED)
 
@@ -47,7 +50,8 @@ async def main():
     args = arguments(__doc__, setup)
     site = resource.Site()
     site.add_resource(["iot", "lab", args.device_id, "status"], LightResource(args.device_id))
-    await serve(site, args)
+    banner = f"CoAP Smart Light Server started...\nResource: /iot/lab/{args.device_id}/status"
+    await serve(site, args, banner=banner)
 
 
 if __name__ == "__main__":

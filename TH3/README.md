@@ -137,7 +137,7 @@ Dừng server bài 2. Terminal 1:
 ..\.venv\Scripts\python.exe light_server_bai3.py
 ```
 
-Terminal 2 đăng ký giám sát:
+Đợi server in `CoAP Smart Light Server started...`, rồi mở terminal 2 đăng ký giám sát:
 
 ```powershell
 ..\.venv\Scripts\python.exe light_monitor_bai3.py
@@ -154,13 +154,13 @@ Nhập `ON`, `STATUS`, `OFF`, một lệnh sai như `HELLO`, rồi `EXIT`.
 
 | Lệnh | Hành vi |
 | --- | --- |
-| `ON`, `OFF` | PUT JSON, nhận `2.04 Changed` và trạng thái đã xử lý |
-| `STATUS` | GET trạng thái hiện tại, nhận `2.05 Content` |
+| `ON`, `OFF` | PUT JSON, in `Response Code: 2.04 Changed` và `Da bat den`/`Da tat den` |
+| `STATUS` | GET trạng thái hiện tại, in JSON trạng thái |
 | `EXIT` | Kết thúc controller |
 | Lệnh khác | Báo lỗi đầu vào và tiếp tục chờ lệnh |
 
 Controller chấp nhận chữ thường và bỏ khoảng trắng đầu/cuối. EOF cũng kết thúc controller.
-Lỗi giao tiếp được báo rõ và controller thoát với mã 1; chạy lại sau khi server sẵn sàng.
+Lỗi giao tiếp (server không chạy, hết thời gian chờ, mã lỗi CoAP) được báo rõ và controller tiếp tục chờ lệnh.
 
 PUT gửi `application/json`:
 
@@ -219,7 +219,7 @@ Nộp 7 chương trình theo tên đề cùng `coap_common.py`, `requirements.tx
 README và log minh chứng. `tests/` cung cấp cách tái hiện kiểm tra. Đề yêu cầu nộp qua GitHub.
 
 - `Address already in use`: dừng server bài trước hoặc chọn cổng mới cho cả server/client.
-- Không có phản hồi: kiểm tra server báo `SERVER READY`, IP, cổng **UDP**, tường lửa và timeout.
+- Không có phản hồi: kiểm tra server báo `SERVER READY` (bài 3: `CoAP Smart Light Server started...`), IP, cổng **UDP**, tường lửa và timeout.
 - `4.04 Not Found`: kiểm tra `--device-id` và URI của server đang chạy.
 - `ModuleNotFoundError`: chạy đúng Python trong `.venv` và cài `requirements.txt`.
 - Không nhận Observe: chạy đúng `light_server_bai3.py`, đợi đăng ký thành công rồi đổi trạng thái đèn.

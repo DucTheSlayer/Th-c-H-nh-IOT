@@ -65,12 +65,12 @@ async def client_context():
     return await aiocoap.Context.create_client_context(transports=["simple6"])
 
 
-async def serve(site, args, background=None):
+async def serve(site, args, background=None, banner=None):
     context = await aiocoap.Context.create_server_context(
         site, bind=(args.host, args.port), transports=["simplesocketserver"])
     task = asyncio.create_task(background()) if background else None
     try:
-        print(f"SERVER READY {args.host}:{args.port} (UDP)", flush=True)
+        print(banner or f"SERVER READY {args.host}:{args.port} (UDP)", flush=True)
         await asyncio.Future()
     finally:
         if task:
@@ -119,11 +119,17 @@ def now():
     return datetime.now().astimezone().strftime("%Y-%m-%d %H:%M:%S %z")
 
 
-def show_state(response, expected_id, label):
+def read_state(response, expected_id):
     data = read_json(response)
     if data.get("device_id") != expected_id or data.get("status") not in ("ON", "OFF"):
         raise ValueError("Payload trạng thái thiết bị không hợp lệ.")
-    print(f"[{now()}] {label}\nDevice: {data['device_id']}\nStatus: {data['status']}", flush=True)
+    return data
+
+
+def show_state(response, expected_id, label):
+    data = read_state(response, expected_id)
+    time = datetime.now().strftime("%H:%M:%S")
+    print(f"\n[{time}] {label}\nDevice: {data['device_id']}\nStatus: {data['status']}", flush=True)
 
 
 def run(main):

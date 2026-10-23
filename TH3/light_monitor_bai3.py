@@ -5,7 +5,7 @@ import asyncio
 import aiocoap
 
 from coap_common import (arguments, client_context, device_id, nonnegative,
-                         run, show_state, uri)
+                         read_state, run, show_state, uri)
 
 
 def setup(parser, config):
@@ -24,10 +24,11 @@ async def main():
         print("Registering CoAP Observe...", flush=True)
         pending = context.request(message)
         initial = await asyncio.wait_for(pending.response, args.timeout)
-        show_state(initial, args.device_id, "Initial State")
+        read_state(initial, args.device_id)
         if initial.opt.observe is None:
             raise ValueError("Server không chấp nhận CoAP Observe.")
         print("Observe registration successful", flush=True)
+        show_state(initial, args.device_id, "Initial State")
         received = 1
         if args.max_notifications == 1:
             return

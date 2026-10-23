@@ -67,9 +67,9 @@ class CoAPIntegrationTests(unittest.IsolatedAsyncioTestCase):
                 if not line:
                     self.fail(f"Tiến trình dừng trước {target}: {''.join(lines)}")
 
-    async def server(self, script, *options):
+    async def server(self, script, *options, ready="SERVER READY"):
         process = self.spawn(script, *options)
-        await self.wait_line(process, "SERVER READY")
+        await self.wait_line(process, ready)
         return process
 
     async def get(self, path):
@@ -169,7 +169,7 @@ class CoAPIntegrationTests(unittest.IsolatedAsyncioTestCase):
                 display_sensor(json_message(data), "sensor01")
 
     async def test_light_two_observers_changes_only_and_invalid_put(self):
-        await self.server("light_server_bai3.py")
+        await self.server("light_server_bai3.py", ready="Resource:")
         second = await client_context()
         self.extra_contexts.append(second)
         queues = [await self.observe(self.context), await self.observe(second)]
@@ -192,17 +192,17 @@ class CoAPIntegrationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(read_json(await self.get("iot/lab/light01/status"))["status"], "OFF")
 
     async def test_controller_and_monitor_cli(self):
-        await self.server("light_server_bai3.py")
+        await self.server("light_server_bai3.py", ready="Resource:")
         monitor = self.spawn("light_monitor_bai3.py", "--max-notifications", "3")
-        initial = await self.wait_line(monitor, "Observe registration successful")
-        self.assertIn("Status: OFF", initial)
+        initial = await self.wait_line(monitor, "Status: OFF")
+        self.assertIn("Observe registration successful", initial)
         for command in ("ON", "OFF"):
             controller = self.spawn("light_controller_bai3.py", stdin=subprocess.PIPE)
             output, _ = await asyncio.to_thread(controller.communicate, f"WRONG\n{command}\nSTATUS\nEXIT\n", timeout=8)
             self.assertEqual(controller.returncode, 0, output)
             self.assertIn("Lệnh không hợp lệ", output)
             self.assertIn("2.04 Changed", output)
-            self.assertIn("2.05 Content", output)
+            self.assertIn(f'"status":"{command}"', output)
             update = await self.wait_line(monitor, f"Status: {command}")
             self.assertIn("State Updated", update)
         output, _ = await asyncio.to_thread(monitor.communicate, timeout=8)
